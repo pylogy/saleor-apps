@@ -75,9 +75,15 @@ const mapSelectedAttributesToRecord = (attr: ProductAttributesDataFragment) => {
 
   const filteredValues = attr.values.filter((v) => !!v.name?.length);
 
-  return {
-    [attr.attribute.name]: filteredValues.map((v) => v.name).join(", ") || "",
-  };
+  if (attr.attribute.name.toLowerCase() == "tags") {
+    return {
+      [attr.attribute.name]: filteredValues.map((v) => v.name) || "",
+    };
+  } else {
+    return {
+      [attr.attribute.name]: filteredValues.map((v) => v.name).join(", ") || "",
+    };
+  }
 };
 
 export function productAndVariantToAlgolia({
