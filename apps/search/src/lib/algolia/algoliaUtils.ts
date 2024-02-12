@@ -77,7 +77,7 @@ const mapSelectedAttributesToRecord = (attr: ProductAttributesDataFragment) => {
 
   if (attr.attribute.name.toLowerCase() == "tags") {
     return {
-      [attr.attribute.name]: filteredValues.map((v) => v.name) || "",
+      [attr.attribute.name]: filteredValues.map((v) => v.name) || [],
     };
   } else {
     return {
