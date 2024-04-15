@@ -1,7 +1,9 @@
 {
   "name": "@saleor/apps-otel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
@@ -19,7 +21,8 @@
     "@opentelemetry/sdk-trace-node": "../../node_modules/@opentelemetry/sdk-trace-node",
     "@opentelemetry/semantic-conventions": "../../node_modules/@opentelemetry/semantic-conventions",
     "eslint": "8.46.0",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "urql": "^4.0.4"
   },
   "devDependencies": {
     "@saleor/app-sdk": "link:../../node_modules/@saleor/app-sdk",

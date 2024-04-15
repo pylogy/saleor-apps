@@ -1,7 +1,9 @@
 {
   "name": "@saleor/apps-ui",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
@@ -14,7 +16,7 @@
     "@types/react": "18.2.5",
     "@types/react-dom": "18.2.5",
     "eslint-config-saleor": "workspace:*",
-    "next": "13.4.8",
+    "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

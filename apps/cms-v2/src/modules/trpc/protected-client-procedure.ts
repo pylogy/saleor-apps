@@ -3,8 +3,9 @@ import { middleware, procedure } from "./trpc-server";
 import { TRPCError } from "@trpc/server";
 import { ProtectedHandlerError } from "@saleor/app-sdk/handlers/next";
 import { saleorApp } from "../../saleor-app";
-import { createGraphQLClient } from "@saleor/apps-shared";
 import { createLogger, logger as appLogger } from "@/logger";
+import { createInstrumentedGraphqlClient } from "./create-instrumented-graphql-client";
+import { REQUIRED_SALEOR_PERMISSIONS } from "@saleor/apps-shared";
 
 const logger = createLogger("protectedClientProcedure");
 
@@ -77,7 +78,10 @@ const validateClientToken = middleware(async ({ ctx, next, meta }) => {
         appId: ctx.appId,
         token: ctx.token,
         saleorApiUrl: ctx.saleorApiUrl,
-        requiredPermissions: meta?.requiredClientPermissions ?? [],
+        requiredPermissions: [
+          ...REQUIRED_SALEOR_PERMISSIONS,
+          ...(meta?.requiredClientPermissions || []),
+        ],
       });
     } catch (e) {
       logger.debug("JWT verification failed, throwing");
@@ -105,7 +109,10 @@ export const protectedClientProcedure = procedure
   .use(attachAppToken)
   .use(validateClientToken)
   .use(async ({ ctx, next }) => {
-    const client = createGraphQLClient({ saleorApiUrl: ctx.saleorApiUrl, token: ctx.appToken });
+    const client = createInstrumentedGraphqlClient({
+      saleorApiUrl: ctx.saleorApiUrl,
+      token: ctx.appToken,
+    });
 
     return next({
       ctx: {

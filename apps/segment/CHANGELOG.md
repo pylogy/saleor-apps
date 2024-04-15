@@ -1,5 +1,46 @@
 # saleor-app-segment
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [f22f2b8a]
+  - @saleor/apps-shared@1.10.1
+  - @saleor/trpc@2.0.1
+
+## 1.2.0
+
+### Minor Changes
+
+- b29318a2: Currently, Dashboard requires from a user to have "MANAGE_APPS" to have access to the apps tab.
+  Since the release 3.20 Dashboard will allow all users to access to apps tabs without checking permission.
+  This means that apps will be checking if the user has "MANAGE_APPS" internally and show message "You do not have permission to access this page" if the user does not have the permission.
+
+### Patch Changes
+
+- Updated dependencies [b29318a2]
+  - @saleor/apps-shared@1.10.0
+  - @saleor/trpc@2.0.0
+
+## 1.1.5
+
+### Patch Changes
+
+- 29d10d4a: Update Next.js to version 14.1.0.
+- Updated dependencies [29d10d4a]
+  - @saleor/apps-shared@1.9.4
+  - @saleor/trpc@1.0.4
+  - @saleor/apps-ui@1.2.3
+  - @saleor/react-hook-form-macaw@0.2.6
+
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies [67afe8e4]
+  - @saleor/apps-shared@1.9.3
+  - @saleor/trpc@1.0.3
+
 ## 1.1.3
 
 ### Patch Changes

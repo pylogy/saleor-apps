@@ -5,6 +5,7 @@
     "build": "turbo run build",
     "check-deps": "syncpack list-mismatches",
     "check-spelling": "cspell **/*.{jsx,tsx,js,ts,md,mdx}",
+    "check-types": "turbo run check-types",
     "deploy": "turbo run deploy",
     "dev": "turbo run dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -13,6 +14,7 @@
     "github:release": "pnpm changeset tag && git push --follow-tags",
     "lint": "turbo run lint",
     "lint-staged": "lint-staged",
+    "lint:fix": "turbo run lint:fix",
     "prepare": "husky install",
     "start": "turbo run start",
     "test": "turbo run test"
@@ -36,26 +38,27 @@
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
     "@sentry/cli": "2.20.6",
-    "@types/node": "18.15.3",
+    "@types/node": "20.12.3",
     "cspell": "^7.2.0",
     "eslint": "8.46.0",
     "eslint-config-saleor": "workspace:*",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
-    "next": "13.4.8",
+    "next": "14.1.0",
     "prettier": "3.0.3",
     "syncpack": "10.9.3",
-    "turbo": "1.10.12"
+    "turbo": "1.12.4"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.17.0 <=20",
+    "pnpm": ">=8"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --cache --fix",
     "*.{ts,tsx,md}": "prettier --write",
     "*.{ts,tsx,md,js,jsx}": "cspell --no-must-find-files"
   },
-  "packageManager": "pnpm@8.10.2",
+  "packageManager": "pnpm@8.15.2",
   "pnpm": {
     "overrides": {
       "crypto-js@<4.2.0": ">=4.2.0"

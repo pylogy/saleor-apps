@@ -44,3 +44,8 @@ apps/**/generated
 
 .vscode/
 .cspellcache
+
+*.tsbuildinfo
+
+# bruno
+cloud.bru

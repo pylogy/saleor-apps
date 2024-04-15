@@ -1,5 +1,25 @@
 # @saleor/apps-logger
 
+## 1.2.2
+
+### Patch Changes
+
+- f22f2b8a: Combine `APP_LOG_LEVEL` variable for `pino` & `tslog` libraries. After this change `APP_LOG_LEVEL` will take string which is one of `silent | trace | debug | info | warn | error | fatal`.
+- df03c571: Fix Sentry breadcrumbs transport, to properly parse dates
+
+## 1.2.1
+
+### Patch Changes
+
+- 0a441ac9: Changed format of Sentry breadcrumbs "timestamp" attribute. Now date is sent as time integer
+- f7ecb7bd: Logger context can now pass path and project_name to help with debugging
+
+## 1.2.0
+
+### Minor Changes
+
+- 1e07a6ff: Added logger context utility. It can wrap function (api handler) to share context within its invocation.
+
 ## 1.1.1
 
 ### Patch Changes

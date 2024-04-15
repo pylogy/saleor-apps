@@ -1,5 +1,31 @@
 # @saleor/apps-shared
 
+## 1.10.1
+
+### Patch Changes
+
+- f22f2b8a: Combine `APP_LOG_LEVEL` variable for `pino` & `tslog` libraries. After this change `APP_LOG_LEVEL` will take string which is one of `silent | trace | debug | info | warn | error | fatal`.
+
+## 1.10.0
+
+### Minor Changes
+
+- b29318a2: Currently, Dashboard requires from a user to have "MANAGE_APPS" to have access to the apps tab.
+  Since the release 3.20 Dashboard will allow all users to access to apps tabs without checking permission.
+  This means that apps will be checking if the user has "MANAGE_APPS" internally and show message "You do not have permission to access this page" if the user does not have the permission.
+
+## 1.9.4
+
+### Patch Changes
+
+- 29d10d4a: Update Next.js to version 14.1.0.
+
+## 1.9.3
+
+### Patch Changes
+
+- 67afe8e4: Allow passing prepending fetch exchange to urql client
+
 ## 1.9.2
 
 ### Patch Changes

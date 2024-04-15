@@ -1,5 +1,65 @@
 # saleor-app-products-feed
 
+## 1.17.2
+
+### Patch Changes
+
+- Updated dependencies [f22f2b8a]
+- Updated dependencies [df03c571]
+  - @saleor/apps-logger@1.2.2
+  - @saleor/apps-shared@1.10.1
+  - @saleor/webhook-utils@0.0.7
+
+## 1.17.1
+
+### Patch Changes
+
+- f7ecb7bd: Logger context can now pass path and project_name to help with debugging
+- Updated dependencies [0a441ac9]
+- Updated dependencies [f7ecb7bd]
+  - @saleor/apps-logger@1.2.1
+
+## 1.17.0
+
+### Minor Changes
+
+- b29318a2: Currently, Dashboard requires from a user to have "MANAGE_APPS" to have access to the apps tab.
+  Since the release 3.20 Dashboard will allow all users to access to apps tabs without checking permission.
+  This means that apps will be checking if the user has "MANAGE_APPS" internally and show message "You do not have permission to access this page" if the user does not have the permission.
+
+### Patch Changes
+
+- Updated dependencies [b29318a2]
+  - @saleor/apps-shared@1.10.0
+  - @saleor/webhook-utils@0.0.6
+
+## 1.16.1
+
+### Patch Changes
+
+- 29d10d4a: Update Next.js to version 14.1.0.
+- Updated dependencies [29d10d4a]
+  - @saleor/apps-shared@1.9.4
+  - @saleor/apps-ui@1.2.3
+  - @saleor/apps-logger@1.2.0
+  - @saleor/apps-otel@1.1.0
+  - @saleor/react-hook-form-macaw@0.2.6
+  - @saleor/webhook-utils@0.0.5
+
+## 1.16.0
+
+### Minor Changes
+
+- 6b974f54: Add open-telemetry to products-feed application
+
+## 1.15.1
+
+### Patch Changes
+
+- Updated dependencies [67afe8e4]
+  - @saleor/apps-shared@1.9.3
+  - @saleor/webhook-utils@0.0.4
+
 ## 1.15.0
 
 ### Minor Changes

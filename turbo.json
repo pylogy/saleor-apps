@@ -1,7 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "globalEnv": ["VERCEL_ENV", "APP_LOG_LEVEL", "NODE_ENV", "CI"],
+  "globalEnv": [
+    "VERCEL_ENV",
+    "APP_LOG_LEVEL",
+    "NODE_ENV",
+    "CI",
+    "OTEL_SERVICE_NAME",
+    "OTEL_ENABLED"
+  ],
   "pipeline": {
     "build": {
       "env": ["NEXT_PUBLIC_VERCEL_ENV"],
@@ -14,6 +21,10 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
+      "inputs": ["src"],
+      "outputs": []
+    },
+    "check-types": {
       "inputs": ["src"],
       "outputs": []
     },
@@ -30,6 +41,9 @@
     "generate": {
       "outputs": ["generated/"]
     },
-    "lint:fix": {}
+    "lint:fix": {
+      "inputs": ["src"],
+      "outputs": []
+    }
   }
 }
