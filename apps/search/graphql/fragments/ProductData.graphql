@@ -1,6 +1,7 @@
 fragment ProductData on Product {
   variants {
     id
+    quantityAvailable
   }
   id
   name

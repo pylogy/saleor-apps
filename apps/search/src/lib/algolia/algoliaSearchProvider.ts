@@ -77,6 +77,7 @@ export class AlgoliaSearchProvider implements SearchProvider {
           attributesForFaceting: [
             "productId",
             "inStock",
+            "productInStock",
             "categories",
             "attributes",
             "collections",
