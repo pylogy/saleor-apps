@@ -2,12 +2,14 @@ import { EditorJsPlaintextRenderer } from "@saleor/apps-shared";
 import {
   AttributeInputTypeEnum,
   ProductAttributesDataFragment,
+  ProductsDataForImportDocument,
   ProductVariantWebhookPayloadFragment,
 } from "../../../generated/graphql";
 import { isNotNil } from "../isNotNil";
 import { safeParseJson } from "../safe-parse-json";
 import { metadataToAlgoliaAttribute } from "./metadata-to-algolia-attribute";
 import { AlgoliaRootFields, AlgoliaRootFieldsKeys } from "../algolia-fields";
+import { GetProduct } from "../saleor";
 
 type PartialChannelListing = {
   channel: {
@@ -159,6 +161,8 @@ export function productAndVariantToAlgolia({
   const listing = variant.channelListings?.find((l) => l.channel.slug === channel);
 
   const inStock = !!variant.quantityAvailable;
+
+  GetProduct(channel, product.id);
 
   const productInStock = product.variants
     ?.map((variant) => !!variant.quantityAvailable)

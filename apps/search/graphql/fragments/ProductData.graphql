@@ -2,11 +2,14 @@ fragment ProductData on Product {
   variants {
     id
     quantityAvailable
+    channel
   }
   id
   name
   description
   slug
+  channel
+  isAvailable
   category {
     name
     parent {
