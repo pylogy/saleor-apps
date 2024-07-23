@@ -23,7 +23,7 @@ type FactoryProps = {
 const logger = createLogger("productDataHandler");
 
 export type ProductDataResponse = {
-  productData: ProductDataFragment;
+  productData?: ProductDataFragment | null;
 };
 
 export const productDataFactory =

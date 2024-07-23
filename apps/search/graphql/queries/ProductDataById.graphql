@@ -1,5 +1,10 @@
 query ProductDataById($id: ID, $channel: String) {
   product(id: $id, channel: $channel) {
-    ...ProductData
+    channel
+    variants {
+      id
+      channel
+      quantityAvailable
+    }
   }
 }

@@ -9,7 +9,7 @@ import { isNotNil } from "../isNotNil";
 import { safeParseJson } from "../safe-parse-json";
 import { metadataToAlgoliaAttribute } from "./metadata-to-algolia-attribute";
 import { AlgoliaRootFields, AlgoliaRootFieldsKeys } from "../algolia-fields";
-import { GetProduct } from "../saleor";
+// import { GetProduct } from "../saleor";
 
 type PartialChannelListing = {
   channel: {
@@ -127,10 +127,12 @@ export function productAndVariantToAlgolia({
   variant,
   channel,
   enabledKeys,
+  inChannel,
 }: {
   variant: ProductVariantWebhookPayloadFragment;
   channel: string;
   enabledKeys: string[];
+  inChannel: boolean;
 }) {
   const product = variant.product;
   const attributes = {
@@ -162,11 +164,13 @@ export function productAndVariantToAlgolia({
 
   const inStock = !!variant.quantityAvailable;
 
-  GetProduct(channel, product.id);
+  // GetProduct(channel, product.id);
 
-  const productInStock = product.variants
-    ?.map((variant) => !!variant.quantityAvailable)
-    .some((x) => x);
+  /*
+   * const productInStock = product.variants
+   *   ?.map((variant) => !!variant.quantityAvailable)
+   *   .some((x) => x);
+   */
 
   const media = variant.product.media?.map((m) => ({ url: m.url, type: m.type })) || [];
 
@@ -237,7 +241,7 @@ export function productAndVariantToAlgolia({
       },
     },
     inStock,
-    productInStock,
+    productInStock: inChannel,
     categories: categoryHierarchicalFacets(variant),
     collections: product.collections?.map((collection) => collection.name) || [],
     metadata: metadataToAlgoliaAttribute(variant.product.metadata),

@@ -1,6 +1,12 @@
 fragment ProductWebhookPayload on Product {
   id
   variants {
+    id
+    name
+    sku
+    metafields
+    quantityAvailable
+    channel
     ...ProductVariantData
   }
 }

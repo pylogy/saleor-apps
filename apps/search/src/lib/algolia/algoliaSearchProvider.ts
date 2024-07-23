@@ -150,14 +150,21 @@ export class AlgoliaSearchProvider implements SearchProvider {
     return this.updateProductVariant(productVariant);
   }
 
-  async updateProductVariant(productVariant: ProductVariantWebhookPayloadFragment) {
+  async updateProductVariant(
+    productVariant: ProductVariantWebhookPayloadFragment,
+    productInChannel?: { [channel: string]: boolean },
+  ) {
     logger.debug(`updateProductVariant called`);
 
-    const groupedByIndexToSave = groupVariantByIndexName(productVariant, {
-      visibleInListings: true,
-      indexNamePrefix: this.#indexNamePrefix,
-      enabledKeys: this.#enabledKeys,
-    });
+    const groupedByIndexToSave = groupVariantByIndexName(
+      productVariant,
+      {
+        visibleInListings: true,
+        indexNamePrefix: this.#indexNamePrefix,
+        enabledKeys: this.#enabledKeys,
+      },
+      productInChannel,
+    );
 
     if (groupedByIndexToSave && !!Object.keys(groupedByIndexToSave).length) {
       await this.saveGroupedByIndex(groupedByIndexToSave);
@@ -217,6 +224,7 @@ const groupVariantByIndexName = (
     indexNamePrefix: string | undefined;
     enabledKeys: string[];
   },
+  productInChannel?: { [channel: string]: boolean },
 ) => {
   logger.debug("Grouping variants per index name");
   if (!productVariant.channelListings) {
@@ -249,6 +257,7 @@ const groupVariantByIndexName = (
         variant: productVariant,
         channel: channelListing.channel.slug,
         enabledKeys,
+        inChannel: productInChannel ? productInChannel[channelListing.channel.slug] : false,
       });
 
       return {

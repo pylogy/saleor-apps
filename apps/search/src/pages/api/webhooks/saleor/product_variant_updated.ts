@@ -1,5 +1,10 @@
 import { NextWebhookApiHandler } from "@saleor/app-sdk/handlers/next";
-import { ProductVariantUpdated } from "../../../../../generated/graphql";
+import { variants } from "@saleor/macaw-ui/dist/components/Icons/SVGWrapper/SVGWrapper.css";
+import {
+  ChannelsDocument,
+  ProductDataByIdDocument,
+  ProductVariantUpdated,
+} from "../../../../../generated/graphql";
 import { WebhookActivityTogglerService } from "../../../../domain/WebhookActivityToggler.service";
 import { createLogger } from "../../../../lib/logger";
 import { webhookProductVariantUpdated } from "../../../../webhooks/definitions/product-variant-updated";
@@ -31,8 +36,33 @@ export const handler: NextWebhookApiHandler<ProductVariantUpdated> = async (req,
   try {
     const { algoliaClient, apiClient } = await createWebhookContext({ authData });
 
+    const channels = productVariant.channelListings?.map(({ channel }) => channel.slug) ?? [];
+
     try {
-      await algoliaClient.updateProductVariant(productVariant);
+      const productsResponse = await Promise.all(
+        channels.map((channel) =>
+          apiClient
+            .query(ProductDataByIdDocument, { id: productVariant.product.id, channel })
+            .toPromise(),
+        ),
+      );
+
+      const productInChannel = productsResponse
+        .flatMap(({ data }) => (data?.product ? [data.product] : []))
+        .reduce(
+          (acc, { channel, variants }) => {
+            if (!channel) return acc;
+
+            const productInChannel = !!variants?.some(
+              ({ quantityAvailable }) => !!quantityAvailable,
+            );
+
+            return { ...acc, [channel]: productInChannel };
+          },
+          {} as { [channel: string]: boolean },
+        );
+
+      await algoliaClient.updateProductVariant(productVariant, productInChannel);
 
       res.status(200).end();
       return;
