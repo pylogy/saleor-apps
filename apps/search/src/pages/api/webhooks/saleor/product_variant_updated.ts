@@ -34,34 +34,12 @@ export const handler: NextWebhookApiHandler<ProductVariantUpdated> = async (req,
   }
 
   try {
-    const { algoliaClient, apiClient } = await createWebhookContext({ authData });
-
-    const channels = productVariant.channelListings?.map(({ channel }) => channel.slug) ?? [];
+    const { algoliaClient, apiClient, productInChannel } = await createWebhookContext({
+      authData,
+      productId: productVariant.product.id,
+    });
 
     try {
-      const productsResponse = await Promise.all(
-        channels.map((channel) =>
-          apiClient
-            .query(ProductDataByIdDocument, { id: productVariant.product.id, channel })
-            .toPromise(),
-        ),
-      );
-
-      const productInChannel = productsResponse
-        .flatMap(({ data }) => (data?.product ? [data.product] : []))
-        .reduce(
-          (acc, { channel, variants }) => {
-            if (!channel) return acc;
-
-            const productInChannel = !!variants?.some(
-              ({ quantityAvailable }) => !!quantityAvailable,
-            );
-
-            return { ...acc, [channel]: productInChannel };
-          },
-          {} as { [channel: string]: boolean },
-        );
-
       await algoliaClient.updateProductVariant(productVariant, productInChannel);
 
       res.status(200).end();

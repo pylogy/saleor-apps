@@ -33,10 +33,13 @@ export const handler: NextWebhookApiHandler<ProductVariantOutOfStock> = async (
   }
 
   try {
-    const { algoliaClient, apiClient } = await createWebhookContext({ authData });
+    const { algoliaClient, apiClient, productInChannel } = await createWebhookContext({
+      authData,
+      productId: productVariant.product.id,
+    });
 
     try {
-      await algoliaClient.updateProductVariant(productVariant);
+      await algoliaClient.updateProductVariant(productVariant, productInChannel);
 
       res.status(200).end();
       return;

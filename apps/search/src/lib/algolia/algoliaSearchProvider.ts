@@ -4,7 +4,7 @@ import {
   ProductWebhookPayloadFragment,
 } from "../../../generated/graphql";
 import { isNotNil } from "../isNotNil";
-import { SearchProvider } from "../searchProvider";
+import { ProductInChannel, SearchProvider } from "../searchProvider";
 import {
   AlgoliaObject,
   channelListingToAlgoliaIndexId,
@@ -123,14 +123,16 @@ export class AlgoliaSearchProvider implements SearchProvider {
     await this.updateProduct(product);
   }
 
-  async updateProduct(product: ProductWebhookPayloadFragment) {
+  async updateProduct(product: ProductWebhookPayloadFragment, productInChannel?: ProductInChannel) {
     logger.debug(`updateProduct called`);
 
     if (!product.variants) {
       logger.debug("Product has no variants - abort");
       return;
     }
-    await Promise.all(product.variants.map((variant) => this.updateProductVariant(variant)));
+    await Promise.all(
+      product.variants.map((variant) => this.updateProductVariant(variant, productInChannel)),
+    );
   }
 
   async deleteProduct(product: ProductWebhookPayloadFragment) {
@@ -152,7 +154,7 @@ export class AlgoliaSearchProvider implements SearchProvider {
 
   async updateProductVariant(
     productVariant: ProductVariantWebhookPayloadFragment,
-    productInChannel?: { [channel: string]: boolean },
+    productInChannel?: ProductInChannel,
   ) {
     logger.debug(`updateProductVariant called`);
 

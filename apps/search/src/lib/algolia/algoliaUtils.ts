@@ -164,14 +164,6 @@ export function productAndVariantToAlgolia({
 
   const inStock = !!variant.quantityAvailable;
 
-  // GetProduct(channel, product.id);
-
-  /*
-   * const productInStock = product.variants
-   *   ?.map((variant) => !!variant.quantityAvailable)
-   *   .some((x) => x);
-   */
-
   const media = variant.product.media?.map((m) => ({ url: m.url, type: m.type })) || [];
 
   const parentProductPricing = variant.product.channelListings?.find(
@@ -241,7 +233,7 @@ export function productAndVariantToAlgolia({
       },
     },
     inStock,
-    productInStock: inChannel,
+    productInStock: inStock || inChannel,
     categories: categoryHierarchicalFacets(variant),
     collections: product.collections?.map((collection) => collection.name) || [],
     metadata: metadataToAlgoliaAttribute(variant.product.metadata),
