@@ -9,7 +9,6 @@ import { isNotNil } from "../isNotNil";
 import { safeParseJson } from "../safe-parse-json";
 import { metadataToAlgoliaAttribute } from "./metadata-to-algolia-attribute";
 import { AlgoliaRootFields, AlgoliaRootFieldsKeys } from "../algolia-fields";
-// import { GetProduct } from "../saleor";
 
 type PartialChannelListing = {
   channel: {
