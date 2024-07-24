@@ -232,7 +232,7 @@ export function productAndVariantToAlgolia({
       },
     },
     inStock,
-    productInStock: inChannel,
+    productInStock: inStock || inChannel,
     categories: categoryHierarchicalFacets(variant),
     collections: product.collections?.map((collection) => collection.name) || [],
     metadata: metadataToAlgoliaAttribute(variant.product.metadata),

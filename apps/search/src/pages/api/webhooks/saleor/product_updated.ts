@@ -29,10 +29,13 @@ export const handler: NextWebhookApiHandler<ProductUpdated> = async (req, res, c
   }
 
   try {
-    const { algoliaClient, apiClient } = await createWebhookContext({ authData });
+    const { algoliaClient, apiClient, productInChannel } = await createWebhookContext({
+      authData,
+      productId: product.id,
+    });
 
     try {
-      await algoliaClient.updateProduct(product);
+      await algoliaClient.updateProduct(product, productInChannel);
 
       res.status(200).end();
       return;
