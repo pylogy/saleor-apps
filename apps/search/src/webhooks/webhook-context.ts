@@ -57,11 +57,15 @@ export const createWebhookContext = async ({
     productInChannel = productResponse
       .flatMap(({ data }) => (data?.product ? [data.product] : []))
       .reduce((acc, { channel, variants }) => {
-        if (!channel) return acc;
+        if (!channel) {
+          return acc;
+        }
 
-        const productInChannel = !!variants?.some(({ quantityAvailable }) => !!quantityAvailable);
+        const productInCurrentChannel = !!variants?.some(
+          ({ quantityAvailable }) => !!quantityAvailable,
+        );
 
-        return { ...acc, [channel]: productInChannel };
+        return { ...acc, [channel]: productInCurrentChannel };
       }, {} as ProductInChannel);
   }
 
