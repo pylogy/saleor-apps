@@ -8,13 +8,7 @@ import { ProductInChannel } from "../lib/searchProvider";
 /**
  * Fetches and creates all shared entities required by webhook to proceed
  */
-export const createWebhookContext = async ({
-  authData,
-  productId,
-}: {
-  authData: AuthData;
-  productId?: string;
-}) => {
+export const createWebhookContext = async ({ authData }: { authData: AuthData }) => {
   const { settings, errors } = await getAlgoliaConfiguration({ authData });
   const apiClient = createInstrumentedGraphqlClient({
     saleorApiUrl: authData.saleorApiUrl,
@@ -45,31 +39,10 @@ export const createWebhookContext = async ({
     enabledKeys: settings.fieldsMapping.enabledAlgoliaFields,
   });
 
-  let productInChannel = undefined;
-
-  if (productId) {
-    const productResponse = await Promise.all(
-      channels.map(({ slug }) =>
-        apiClient.query(ProductDataByIdDocument, { id: productId, channel: slug }).toPromise(),
-      ),
-    );
-
-    productInChannel = productResponse
-      .flatMap(({ data }) => (data?.product ? [data.product] : []))
-      .reduce((acc, { channel, variants }) => {
-        if (!channel) return acc;
-
-        const productInChannel = !!variants?.some(({ quantityAvailable }) => !!quantityAvailable);
-
-        return { ...acc, [channel]: productInChannel };
-      }, {} as ProductInChannel);
-  }
-
   return {
     apiClient,
     channels,
     settings,
     algoliaClient,
-    productInChannel,
   };
 };
