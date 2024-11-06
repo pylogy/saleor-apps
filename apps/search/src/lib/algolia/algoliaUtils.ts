@@ -126,12 +126,12 @@ export function productAndVariantToAlgolia({
   variant,
   channel,
   enabledKeys,
-  inChannel,
+  variantProductInChannel,
 }: {
   variant: ProductVariantWebhookPayloadFragment;
   channel: string;
   enabledKeys: string[];
-  inChannel: boolean;
+  variantProductInChannel: boolean;
 }) {
   const product = variant.product;
   const attributes = {
@@ -232,7 +232,7 @@ export function productAndVariantToAlgolia({
       },
     },
     inStock,
-    productInStock: inChannel,
+    productInStock: variantProductInChannel,
     categories: categoryHierarchicalFacets(variant),
     collections: product.collections?.map((collection) => collection.name) || [],
     metadata: metadataToAlgoliaAttribute(variant.product.metadata),

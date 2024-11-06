@@ -29,7 +29,14 @@ export const handler: NextWebhookApiHandler<ProductUpdated> = async (req, res, c
     return res.status(200).end();
   }
 
-  const channels = product.channelListings?.map(({ channel }) => channel.slug) ?? [];
+  // const channels = product.channelListings?.map(({ channel }) => channel.slug) ?? [];
+  const channels = Array.from(
+    new Set(
+      product.variants?.flatMap(({ channelListings }) => {
+        return channelListings?.map(({ channel }) => channel.slug) ?? [];
+      }) ?? [],
+    ),
+  );
 
   try {
     const { algoliaClient, apiClient } = await createWebhookContext({ authData });

@@ -4,6 +4,7 @@ import {
   ProductWebhookPayloadFragment,
 } from "../../../generated/graphql";
 import { isNotNil } from "../isNotNil";
+import { createLogger } from "../logger";
 import { ProductInChannel, SearchProvider } from "../searchProvider";
 import {
   AlgoliaObject,
@@ -11,7 +12,6 @@ import {
   productAndVariantToAlgolia,
   productAndVariantToObjectID,
 } from "./algoliaUtils";
-import { createLogger } from "../logger";
 
 export interface AlgoliaSearchProviderOptions {
   appId: string;
@@ -130,6 +130,7 @@ export class AlgoliaSearchProvider implements SearchProvider {
       logger.debug("Product has no variants - abort");
       return;
     }
+
     await Promise.all(
       product.variants.map((variant) => this.updateProductVariant(variant, productInChannel)),
     );
@@ -149,6 +150,7 @@ export class AlgoliaSearchProvider implements SearchProvider {
 
   async createProductVariant(productVariant: ProductVariantWebhookPayloadFragment) {
     logger.debug(`createProductVariant called`);
+
     return this.updateProductVariant(productVariant);
   }
 
@@ -165,7 +167,9 @@ export class AlgoliaSearchProvider implements SearchProvider {
         indexNamePrefix: this.#indexNamePrefix,
         enabledKeys: this.#enabledKeys,
       },
-      productInChannel,
+      {
+        multipleChannelsUpdate: productInChannel,
+      },
     );
 
     if (groupedByIndexToSave && !!Object.keys(groupedByIndexToSave).length) {
@@ -226,7 +230,13 @@ const groupVariantByIndexName = (
     indexNamePrefix: string | undefined;
     enabledKeys: string[];
   },
-  productInChannel?: { [channel: string]: boolean },
+  {
+    singleChannelUpdate,
+    multipleChannelsUpdate,
+  }: {
+    singleChannelUpdate?: string;
+    multipleChannelsUpdate?: ProductInChannel;
+  },
 ) => {
   logger.debug("Grouping variants per index name");
   if (!productVariant.channelListings) {
@@ -254,12 +264,23 @@ const groupVariantByIndexName = (
         ? true
         : productChannelListing.visibleInListings === visibleInListings;
     })
+    .filter((channelListing) => {
+      if (!!singleChannelUpdate) {
+        return channelListing.channel.slug === singleChannelUpdate;
+      }
+
+      return true;
+    })
     .map((channelListing) => {
+      const variantProductInChannel = multipleChannelsUpdate
+        ? multipleChannelsUpdate[channelListing.channel.slug]
+        : false;
+
       const object = productAndVariantToAlgolia({
         variant: productVariant,
         channel: channelListing.channel.slug,
         enabledKeys,
-        inChannel: productInChannel ? productInChannel[channelListing.channel.slug] : false,
+        variantProductInChannel,
       });
 
       return {
@@ -268,7 +289,8 @@ const groupVariantByIndexName = (
       };
     })
     .reduce((acc, { object, indexName }) => {
-      acc[indexName] = acc[indexName] ?? [];
+      acc[indexName] ||= [];
+
       acc[indexName].push(object);
       return acc;
     }, {} as GroupedByIndex);
@@ -292,7 +314,15 @@ const groupProductsByIndexName = (
   const batchesAndIndices = productsBatch
     .flatMap((p) => p.variants)
     .filter(isNotNil)
-    .map((p) => groupVariantByIndexName(p, { visibleInListings, indexNamePrefix, enabledKeys }))
+    .map((p) => {
+      const singleChannelUpdate = p.channel ?? undefined;
+
+      return groupVariantByIndexName(
+        p,
+        { visibleInListings, indexNamePrefix, enabledKeys },
+        { singleChannelUpdate },
+      );
+    })
     .filter(isNotNil)
     .flatMap((x) => Object.entries(x));
 
@@ -303,5 +333,53 @@ const groupProductsByIndexName = (
     return acc;
   }, {} as GroupedByIndex);
 
-  return groupedByIndex;
+  const revalidatedInStockGroupedByIndex = revalidateInStockVariants(groupedByIndex);
+
+  return revalidatedInStockGroupedByIndex;
+};
+
+const revalidateInStockVariants = (groupedByIndexToSave: GroupedByIndex) => {
+  const revalidateInStockByProductId = (productId: string, objects: AlgoliaObject[]) => {
+    const matchingObjects = objects.filter(
+      ({ productId: objectProductId }) => objectProductId === productId,
+    );
+
+    const anyInStock = matchingObjects.some(({ inStock }) => inStock);
+
+    if (anyInStock) {
+      const updatedMatchingObjects = matchingObjects.reduce(
+        (acc, object) => {
+          const updatedObject = { ...object, productInStock: true };
+
+          return [...acc, updatedObject];
+        },
+        [] as typeof matchingObjects,
+      );
+
+      return updatedMatchingObjects;
+    }
+
+    return matchingObjects;
+  };
+
+  const objectsToSaveByIndexNameInStockRevalidated = Object.entries(groupedByIndexToSave).reduce(
+    (acc, [indexName, objects]) => {
+      acc[indexName] ||= [];
+
+      const productIdsInObjects = Array.from(new Set(objects.map(({ productId }) => productId)));
+
+      const revalidatedInStockObjects = productIdsInObjects.reduce((acc, productId) => {
+        const revalidated = revalidateInStockByProductId(productId, objects);
+
+        return [...acc, ...revalidated];
+      }, [] as AlgoliaObject[]);
+
+      acc[indexName] = revalidatedInStockObjects;
+
+      return acc;
+    },
+    {} as GroupedByIndex,
+  );
+
+  return objectsToSaveByIndexNameInStockRevalidated;
 };

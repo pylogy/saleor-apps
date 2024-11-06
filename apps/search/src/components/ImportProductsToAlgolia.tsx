@@ -1,9 +1,10 @@
+import { Layout } from "@saleor/apps-ui";
 import { Box, Button, Text } from "@saleor/macaw-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AlgoliaSearchProvider } from "../lib/algolia/algoliaSearchProvider";
-import { Products, useQueryAllProducts } from "./useQueryAllProducts";
+import { ProductInChannel } from "../lib/searchProvider";
 import { trpcClient } from "../modules/trpc/trpc-client";
-import { Layout } from "@saleor/apps-ui";
+import { Products, useQueryAllProducts } from "./useQueryAllProducts";
 
 const BATCH_SIZE = 100;
 

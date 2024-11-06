@@ -3,7 +3,10 @@ subscription ProductCreated {
     __typename
     ... on ProductCreated {
       __typename
-      product {
+      product_tg1: product(channel: "tg1-channel") {
+        ...ProductWebhookPayload
+      }
+      product_tg2: product(channel: "tg2-channel") {
         ...ProductWebhookPayload
       }
     }
